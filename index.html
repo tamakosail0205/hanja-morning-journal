@@ -1,10 +1,408 @@
-&lt;!DOCTYPE html&gt;
-&lt;html lang="ko"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;title&gt;한자의 아침&lt;/title&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  준비 중
-&lt;/body&gt;
-&lt;/html&gt;
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>한자의 아침 — 이번 주의 한자</title>
+<style>
+  *{box-sizing:border-box}
+  body{
+    margin:0; min-height:100vh; font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;
+    background:#f4f1eb; color:#24211d; display:flex; align-items:center; justify-content:center;
+  }
+  .app{width:min(1100px,94vw); min-height:92vh; display:flex; flex-direction:column}
+  header{display:flex;justify-content:space-between;align-items:center;padding:24px 4px}
+  .brand{font-size:14px;letter-spacing:.12em}
+  .counter{font-size:12px;color:#777}
+  main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+  h1{font-family:serif;font-weight:400;font-size:clamp(28px,5vw,52px);margin:0 0 46px}
+  .choices{display:flex;gap:clamp(16px,4vw,42px);width:100%;justify-content:center}
+  .choice{
+    width:min(360px,42vw); aspect-ratio:3/4; border:1px solid #d7d0c6;
+    background:#fbfaf7; cursor:pointer; transition:.35s; display:flex; flex-direction:column;
+    align-items:center;justify-content:center; position:relative;
+  }
+  .choice:hover{transform:translateY(-8px);box-shadow:0 18px 40px #00000012}
+  .choice .letter{font-family:serif;font-size:clamp(75px,13vw,150px);line-height:1}
+  .choice .reading{margin-top:28px;font-size:16px}
+  .choice .tag{margin-top:10px;color:#8a8177;font-size:13px}
+  footer{padding:25px 4px;text-align:center;color:#999;font-size:11px}
+  .hidden{display:none!important}
+  .card-wrap{perspective:1400px;width:min(430px,82vw);aspect-ratio:3/4;margin:5px auto 28px;cursor:pointer}
+  .card{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
+  .card.flipped{transform:rotateY(180deg)}
+  .face{
+    position:absolute;inset:0;backface-visibility:hidden;background:#fbfaf7;
+    border:1px solid #d7d0c6;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:35px
+  }
+  .back{transform:rotateY(180deg)}
+  .face .big{font-family:serif;font-size:clamp(100px,18vw,170px);line-height:1}
+  .face .title{font-size:17px;margin-top:25px}
+  .face .phrase{margin-top:10px;color:#81786e;font-size:14px}
+  .back .mini{font-size:12px;letter-spacing:.12em;color:#968b80;margin-bottom:35px}
+  .back h2{font-family:serif;font-weight:400;font-size:clamp(22px,4vw,32px);line-height:1.5;margin:0 0 25px}
+  .back p{font-size:14px;line-height:2;color:#5f5952;max-width:310px;margin:0}
+  .hint{font-size:12px;color:#9a928a}
+  .actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  button{
+    border:1px solid #cfc7bd;background:transparent;padding:11px 20px;border-radius:30px;
+    cursor:pointer;font:inherit;font-size:12px;color:#4c4741
+  }
+  button:hover{background:#ebe6df}
+  .primary{background:#2d2925;color:#fff;border-color:#2d2925}
+  .primary:hover{background:#181613;color:#fff}
+  .modal{
+    position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;
+    padding:20px;z-index:10
+  }
+  .modalbox{background:#faf8f4;width:min(650px,94vw);max-height:86vh;overflow:auto;padding:38px}
+  .modalbox .mletter{font-family:serif;font-size:72px;text-align:center;margin-bottom:12px}
+  .modalbox h2{font-family:serif;font-weight:400;text-align:center;margin:0 0 30px}
+  .section{margin:25px 0}.section h3{font-size:12px;letter-spacing:.12em;color:#8b8176;margin-bottom:10px}
+  .section p{font-family:serif;font-size:16px;line-height:2;margin:0;white-space:pre-line}
+  .storybox{
+    margin-top:20px;border:0;border-bottom:1px solid #cfc7bd;background:transparent;width:100%;
+    min-height:150px;resize:vertical;font:16px/2 serif;outline:none
+  }
+  .toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);background:#2d2925;color:#fff;padding:10px 18px;border-radius:20px;font-size:12px;z-index:100}
+  .honeypot{position:absolute;left:-9999px;opacity:0;height:0;width:0}
+
+  /* 이번 주 자동 카드 덱 */
+  .week-head{margin:0 0 14px;font-size:13px;letter-spacing:.12em;color:#8a8177}
+  .week-title{font-family:serif;font-weight:400;font-size:clamp(28px,5vw,52px);margin:0 0 10px}
+  .week-sub{font-size:13px;color:#8a8177;margin:0 0 34px}
+  .deck-stage{position:relative;width:min(430px,82vw);aspect-ratio:3/4;margin:0 auto 28px;perspective:1400px}
+  .deck-card{
+    position:absolute;inset:0;background:#fbfaf7;border:1px solid #d7d0c6;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    cursor:pointer;transition:transform .65s cubic-bezier(.2,.75,.2,1),opacity .35s,filter .35s;
+    box-shadow:0 18px 42px #00000010;transform-origin:50% 75%;
+  }
+  .deck-card .letter{font-family:serif;font-size:clamp(100px,18vw,170px);line-height:1}
+  .deck-card .reading{margin-top:25px;font-size:17px}
+  .deck-card .tag{margin-top:10px;color:#81786e;font-size:14px}
+  .deck-card .date{position:absolute;left:22px;top:20px;font-size:11px;letter-spacing:.1em;color:#a59b90}
+  .deck-card .now{position:absolute;right:22px;top:20px;font-size:10px;letter-spacing:.11em;color:#6f655b}
+  .deck-card.active{z-index:20;transform:translateY(-10px) rotate(0deg) scale(1.015)}
+  .deck-card.back-1{z-index:9;transform:translate(12px,14px) rotate(1.8deg) scale(.985);filter:saturate(.92)}
+  .deck-card.back-2{z-index:8;transform:translate(-13px,24px) rotate(-2.4deg) scale(.97);filter:saturate(.88)}
+  .deck-card.back-3{z-index:7;transform:translate(20px,34px) rotate(3deg) scale(.955);filter:saturate(.84)}
+  .deck-card.back-4{z-index:6;transform:translate(-18px,43px) rotate(-3.4deg) scale(.94);filter:saturate(.8)}
+  .deck-card.back-5{z-index:5;transform:translate(10px,50px) rotate(1.4deg) scale(.925);filter:saturate(.76)}
+  .deck-card.hidden-card{opacity:0;pointer-events:none}
+  .deck.shuffling .deck-card{animation:shuffle .78s ease both}
+  .deck.shuffling .deck-card:nth-child(2n){animation-delay:.04s}
+  .deck.shuffling .deck-card:nth-child(3n){animation-delay:.08s}
+  @keyframes shuffle{
+    0%{transform:translate(0,0) rotate(0) scale(1)}
+    30%{transform:translate(-38px,-5px) rotate(-6deg) scale(.98)}
+    58%{transform:translate(42px,-8px) rotate(6deg) scale(.985)}
+    80%{transform:translate(-10px,3px) rotate(-1.5deg) scale(.99)}
+  }
+  .deck-hint{font-size:12px;color:#9a928a;margin-top:14px}
+  .deck-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+  .archive-note{font-size:11px;color:#aaa;margin-top:12px}
+
+  @media(max-width:650px){
+    .choices{gap:10px}.choice{width:45vw}.choice .reading{font-size:13px}.choice .tag{font-size:11px}
+    .modalbox{padding:25px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand">한자의 아침</div>
+  <div class="counter" id="counter"></div>
+</header>
+<main id="home">
+  <div class="week-head">THIS WEEK</div>
+  <h1 class="week-title">이번 주의 한자</h1>
+  <p class="week-sub">카드가 섞인 뒤, 이번 주 한 장이 앞으로 나옵니다.</p>
+
+  <div class="deck-stage">
+    <div class="deck" id="deck"></div>
+  </div>
+
+  <div class="deck-hint">맨 앞 카드를 눌러 질문을 확인해보세요.</div>
+  <div class="deck-actions">
+    <button onclick="shuffleDeck()">카드 다시 섞기</button>
+  </div>
+  <div class="archive-note" id="archiveNote"></div>
+</main>
+<main id="cardScreen" class="hidden">
+  <div class="card-wrap" onclick="flipCard()">
+    <div class="card" id="card">
+      <div class="face front">
+        <div class="big" id="bigChar">愛</div>
+        <div class="title" id="reading">사랑 애</div>
+        <div class="phrase" id="phrase">마음이 향하는 곳</div>
+      </div>
+      <div class="face back">
+        <div class="mini">한 번 더 생각해보기</div>
+        <h2 id="question">당신은 요즘 어떤 사랑을<br>배우고 있나요?</h2>
+        <p id="prompt">사람일 수도, 일일 수도, 장소일 수도 있습니다.<br>하나의 장면을 떠올려보세요.</p>
+      </div>
+    </div>
+  </div>
+  <div class="hint">카드를 클릭하면 뒤집힙니다</div>
+  <div class="actions" style="margin-top:20px">
+    <button onclick="openExplain()">카드 해설</button>
+    <button onclick="story()">내 이야기 남기기</button>
+    <button onclick="home()">카드 더미로</button>
+  </div>
+</main>
+<footer>SPACE 카드 뒤집기 · N 카드 더미 · ESC 닫기</footer>
+</div>
+
+<!-- 카드 해설 모달 -->
+<div id="modal" class="modal hidden" onclick="if(event.target===this)closeModal()">
+  <div class="modalbox">
+    <div class="mletter" id="mletter">愛</div>
+    <h2 id="mtitle">사랑 애</h2>
+    <div class="section"><h3>글자의 이야기</h3><p id="storyText"></p></div>
+    <div class="section"><h3>한 번 더 생각해보기</h3><p id="mquestion"></p></div>
+    <div class="actions"><button onclick="closeModal()">닫기</button></div>
+  </div>
+</div>
+
+<!-- 이야기 남기기: Google Forms -->
+<div id="storyModal" class="modal hidden" onclick="if(event.target===this)closeModal()">
+  <div class="modalbox">
+    <div class="mletter" id="sletter">愛</div>
+    <h2>그 장면을 남겨보세요</h2>
+    <p style="text-align:center;color:#777;font-size:13px;margin-bottom:8px">완성된 글이 아니어도 괜찮습니다. 기억나는 만큼만.</p>
+
+    <form name="hanja-story" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="storyForm">
+      <input type="hidden" name="form-name" value="hanja-story" />
+      <input type="hidden" name="character" id="storyChar" value="愛" />
+      <p class="honeypot">
+        <label>Don’t fill this out: <input name="bot-field" /></label>
+      </p>
+
+      <textarea class="storybox" name="story" id="storyInput" placeholder="어떤 장면이 떠올랐나요?" required></textarea>
+
+      <div class="actions" style="margin-top:25px">
+        <button type="button" onclick="closeModal()">마음에 더 남겨두기</button>
+        <button type="submit" class="primary" id="submitBtn">이야기 남기기</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+const cards = [
+  {
+    key:'joy',
+    start:'2026-10-01',
+    char:'樂',
+    reading:'즐거울 락',
+    phrase:'함께할 때 커지는 즐거움',
+    question:'요즘 나는 무엇과 함께할 때<br>가장 즐거운가요?',
+    prompt:'사람일 수도, 장소일 수도, 아주 사소한 순간일 수도 있습니다.<br>하나의 장면을 떠올려보세요.',
+    story:`樂은 본래 나무로 만든 악기의 모습을 담은 글자입니다.
+
+아래의 木은 악기의 바탕이 되는 나무를, 가운데 이어진 모습은 현을 떠올리게 합니다. 소리는 한 사람에게서 시작하지만 다른 사람의 귀에 닿고, 여러 소리가 만나면 하나의 음악이 됩니다.
+
+그래서 樂의 즐거움은 혼자 움켜쥔 기쁨보다 누군가와 나누며 커지는 즐거움으로도 읽을 수 있습니다.
+
+당신은 요즘 무엇과 함께할 때 가장 즐거운가요?`
+  },
+  {
+    key:'sadness',
+    start:'2026-10-12',
+    char:'悲',
+    reading:'슬플 비',
+    phrase:'소중했던 것을 알아보는 마음',
+    question:'최근 나를 슬프게 한 일은<br>무엇인가요?',
+    prompt:'사라진 것, 멀어진 것, 마음에 오래 남은 장면을 떠올려보세요.',
+    story:`悲는 非와 心이 합쳐진 글자입니다.
+
+슬픔은 우리가 피하고 싶은 감정이지만, 무엇을 소중하게 여기고 있었는지를 알려주기도 합니다. 잃었기 때문에 슬프고, 사랑했기 때문에 아픕니다.
+
+그래서 슬픔을 없애는 것보다 그 마음이 무엇을 말하는지 잠시 바라보는 일이 먼저일지도 모릅니다.
+
+최근 당신을 슬프게 한 일은 무엇인가요?`
+  },
+  {
+    key:'anger',
+    start:'2026-10-19',
+    char:'怒',
+    reading:'성낼 노',
+    phrase:'지키고 싶은 것이 있다는 신호',
+    question:'최근 내가 화를 냈던 일은<br>무엇인가요?',
+    prompt:'화가 난 장면 하나를 떠올리고, 그때 무엇을 지키고 싶었는지 생각해보세요.',
+    story:`怒는 奴와 心이 합쳐진 글자입니다.
+
+분노는 갑자기 생겨나는 것처럼 보이지만 대개 이유가 있습니다. 무시당했을 때, 부당한 일을 겪었을 때, 소중한 것이 침해되었을 때 마음은 강하게 반응합니다.
+
+분노는 없애야 할 감정이라기보다 무엇인가 잘못되었다고 알려주는 신호일 수 있습니다.
+
+당신의 분노는 무엇을 지키려고 하고 있나요?`
+  },
+  {
+    key:'fear',
+    start:'2026-10-26',
+    char:'恐',
+    reading:'두려울 공',
+    phrase:'멈추게 하고 살피게 하는 마음',
+    question:'요즘 내가 가장 두려워하는 것은<br>무엇인가요?',
+    prompt:'두려움이 생기는 장면과, 그 두려움이 알려주는 것을 함께 떠올려보세요.',
+    story:`恐은 마음 心을 아래에 둔 글자입니다.
+
+두려움은 위험 앞에서 몸과 마음이 보내는 경고입니다. 우리를 멈추게 하기도 하지만, 무엇을 조심해야 하는지 알려주기도 합니다.
+
+용기는 두려움이 없는 상태라기보다 두려움을 느끼면서도 내가 중요하게 여기는 것을 향해 움직이는 힘인지도 모릅니다.
+
+당신은 지금 무엇을 두려워하고 있나요?`
+  }
+
+  /* 다음 달부터 이 아래에 4개씩 계속 추가하세요.
+  {
+    key:'...',
+    start:'2026-11-02',
+    char:'...',
+    reading:'...',
+    phrase:'...',
+    question:'...',
+    prompt:'...',
+    story:`...`
+  }
+  */
+];
+
+const data = Object.fromEntries(cards.map(card => [card.key, card]));
+
+function todayKST(){
+  const parts = new Intl.DateTimeFormat('en-CA',{
+    timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'
+  }).formatToParts(new Date());
+  const m = Object.fromEntries(parts.map(p=>[p.type,p.value]));
+  return `${m.year}-${m.month}-${m.day}`;
+}
+
+function activeKeyFromDate(date=todayKST()){
+  const forced = new URLSearchParams(location.search).get('hanja');
+  if(forced){
+    const found = cards.find(c => c.char === forced || c.key === forced);
+    if(found) return found.key;
+  }
+  const ordered = [...cards].sort((a,b)=>a.start.localeCompare(b.start));
+  let active = ordered[0];
+  for(const c of ordered){
+    if(c.start <= date) active = c;
+    else break;
+  }
+  return active.key;
+}
+
+let current = activeKeyFromDate();
+
+
+function renderDeck(){
+  const deck = document.getElementById('deck');
+  if(!deck) return;
+  deck.innerHTML = '';
+
+  const currentIndex = cards.findIndex(c => c.key === current);
+  const order = [
+    cards[currentIndex],
+    ...cards.slice(currentIndex + 1),
+    ...cards.slice(0, currentIndex)
+  ];
+
+  order.forEach((d, i) => {
+    const card = document.createElement('div');
+    const level = i === 0 ? 'active' : (i <= 5 ? `back-${i}` : 'hidden-card');
+    card.className = `deck-card ${level}`;
+    card.style.zIndex = String(30 - i);
+    card.innerHTML = `
+      <div class="date">${d.start}</div>
+      ${i===0 ? '<div class="now">이번 주</div>' : ''}
+      <div class="letter">${d.char}</div>
+      <div class="reading">${d.reading}</div>
+      <div class="tag">${d.phrase}</div>
+    `;
+    if(i===0){
+      card.addEventListener('click', () => choose(d.key));
+    }
+    deck.appendChild(card);
+  });
+
+  document.getElementById('counter').textContent = cards[currentIndex].char;
+  document.getElementById('archiveNote').textContent =
+    `현재 ${cards.length}장의 카드가 쌓여 있습니다.`;
+}
+
+function shuffleDeck(){
+  const deck = document.getElementById('deck');
+  deck.classList.remove('shuffling');
+  void deck.offsetWidth;
+  deck.classList.add('shuffling');
+  setTimeout(()=>deck.classList.remove('shuffling'),900);
+}
+
+function choose(type) {
+  current = type;
+  const d = data[type];
+  document.getElementById('home').classList.add('hidden');
+  document.getElementById('cardScreen').classList.remove('hidden');
+  document.getElementById('bigChar').textContent = d.char;
+  document.getElementById('reading').textContent = d.reading;
+  document.getElementById('phrase').textContent = d.phrase;
+  document.getElementById('question').innerHTML = d.question;
+  document.getElementById('prompt').innerHTML = d.prompt;
+  document.getElementById('card').classList.remove('flipped');
+  document.getElementById('counter').textContent = d.char;
+}
+
+function flipCard() {
+  document.getElementById('card').classList.toggle('flipped');
+}
+
+function home() {
+  current = activeKeyFromDate();
+  document.getElementById('cardScreen').classList.add('hidden');
+  document.getElementById('home').classList.remove('hidden');
+  renderDeck();
+}
+
+function openExplain() {
+  const d = data[current];
+  document.getElementById('mletter').textContent = d.char;
+  document.getElementById('mtitle').textContent = d.reading + ' · ' + d.phrase;
+  document.getElementById('storyText').textContent = d.story;
+  document.getElementById('mquestion').innerHTML = d.question.replace(/<br>/g, ' ');
+  document.getElementById('modal').classList.remove('hidden');
+}
+
+function story() {
+  window.open('https://docs.google.com/forms/d/1rQY5PHKkGA31ON1RQDnor91ufuciVmziSLKlvdksg6U/viewform', '_blank', 'noopener,noreferrer');
+}
+
+function closeModal() {
+  document.querySelectorAll('.modal').forEach(x => x.classList.add('hidden'));
+}
+
+function toast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
+
+renderDeck();
+setTimeout(shuffleDeck, 250);
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+  if (e.code === 'Space' && !document.getElementById('cardScreen').classList.contains('hidden')) {
+    e.preventDefault();
+    flipCard();
+  }
+  if (e.key.toLowerCase() === 'n') home();
+});
+</script>
+</body>
+</html>
