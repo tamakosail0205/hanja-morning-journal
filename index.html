@@ -65,7 +65,12 @@
     min-height:150px;resize:vertical;font:16px/2 serif;outline:none
   }
   .toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);background:#2d2925;color:#fff;padding:10px 18px;border-radius:20px;font-size:12px;z-index:100}
-  .honeypot{position:absolute;left:-9999px;opacity:0;height:0;width:0}
+  .form-modalbox{width:min(740px,96vw);height:min(850px,90dvh);max-height:90dvh;padding:14px;display:flex;flex-direction:column;overflow:hidden}
+  .form-header{display:flex;justify-content:space-between;align-items:center;padding:2px 6px 10px;font-size:14px}
+  #storyFrame{width:100%;border:0;flex:1;min-height:0;background:#fff}
+  .form-note{margin:8px 0 0;text-align:center;font-size:12px;color:#777}
+  .form-note a{color:#4c4741;text-decoration:underline}
+  @media(max-width:650px){.form-modalbox{width:100%;height:94dvh;max-height:94dvh;padding:10px}}
 
   /* 이번 주 자동 카드 덱 */
   .week-head{margin:0 0 14px;font-size:13px;letter-spacing:.12em;color:#8a8177}
@@ -166,27 +171,12 @@
   </div>
 </div>
 
-<!-- 이야기 남기기: Google Forms -->
-<div id="storyModal" class="modal hidden" onclick="if(event.target===this)closeModal()">
-  <div class="modalbox">
-    <div class="mletter" id="sletter">愛</div>
-    <h2>그 장면을 남겨보세요</h2>
-    <p style="text-align:center;color:#777;font-size:13px;margin-bottom:8px">완성된 글이 아니어도 괜찮습니다. 기억나는 만큼만.</p>
-
-    <form name="hanja-story" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="storyForm">
-      <input type="hidden" name="form-name" value="hanja-story" />
-      <input type="hidden" name="character" id="storyChar" value="愛" />
-      <p class="honeypot">
-        <label>Don’t fill this out: <input name="bot-field" /></label>
-      </p>
-
-      <textarea class="storybox" name="story" id="storyInput" placeholder="어떤 장면이 떠올랐나요?" required></textarea>
-
-      <div class="actions" style="margin-top:25px">
-        <button type="button" onclick="closeModal()">마음에 더 남겨두기</button>
-        <button type="submit" class="primary" id="submitBtn">이야기 남기기</button>
-      </div>
-    </form>
+<!-- 이야기 남기기: 페이지 내부 Google Forms 팝업 -->
+<div id="storyModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="내 이야기 남기기" onclick="if(event.target===this)closeModal()">
+  <div class="modalbox form-modalbox">
+    <div class="form-header"><strong>내 이야기 남기기</strong><button type="button" onclick="closeModal()" aria-label="닫기">✕ 닫기</button></div>
+    <iframe id="storyFrame" title="한자의 아침 이야기 편지 구글 설문" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+    <p class="form-note">설문이 보이지 않으면 <a href="https://docs.google.com/forms/d/1rQY5PHKkGA31ON1RQDnor91ufuciVmziSLKlvdksg6U/viewform" target="_blank" rel="noopener noreferrer">구글 설문 직접 열기</a></p>
   </div>
 </div>
 
@@ -377,7 +367,9 @@ function openExplain() {
 }
 
 function story() {
-  window.open('https://docs.google.com/forms/d/1rQY5PHKkGA31ON1RQDnor91ufuciVmziSLKlvdksg6U/viewform', '_blank', 'noopener,noreferrer');
+  const frame = document.getElementById('storyFrame');
+  if (!frame.src) frame.src = 'https://docs.google.com/forms/d/1rQY5PHKkGA31ON1RQDnor91ufuciVmziSLKlvdksg6U/viewform?embedded=true';
+  document.getElementById('storyModal').classList.remove('hidden');
 }
 
 function closeModal() {
