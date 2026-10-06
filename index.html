@@ -184,7 +184,7 @@
 const cards = [
   {
     key:'joy',
-    start:'2026-10-01',
+    start:'2026-09-28',
     char:'樂',
     reading:'즐거울 락',
     phrase:'함께할 때 커지는 즐거움',
@@ -200,7 +200,7 @@ const cards = [
   },
   {
     key:'sadness',
-    start:'2026-10-12',
+    start:'2026-10-05',
     char:'悲',
     reading:'슬플 비',
     phrase:'소중했던 것을 알아보는 마음',
@@ -216,7 +216,7 @@ const cards = [
   },
   {
     key:'anger',
-    start:'2026-10-19',
+    start:'2026-10-12',
     char:'怒',
     reading:'성낼 노',
     phrase:'지키고 싶은 것이 있다는 신호',
@@ -232,7 +232,7 @@ const cards = [
   },
   {
     key:'fear',
-    start:'2026-10-26',
+    start:'2026-10-19',
     char:'恐',
     reading:'두려울 공',
     phrase:'멈추게 하고 살피게 하는 마음',
@@ -271,6 +271,14 @@ function todayKST(){
   return `${m.year}-${m.month}-${m.day}`;
 }
 
+function weekRange(start){
+  const [y,m,d] = start.split('-').map(Number);
+  const a = new Date(Date.UTC(y,m-1,d)), b = new Date(a);
+  b.setUTCDate(a.getUTCDate()+6);
+  const f=x=>String(x).padStart(2,'0');
+  return `${f(a.getUTCMonth()+1)}.${f(a.getUTCDate())}–${f(b.getUTCMonth()+1)}.${f(b.getUTCDate())}`;
+}
+
 function activeKeyFromDate(date=todayKST()){
   const forced = new URLSearchParams(location.search).get('hanja');
   if(forced){
@@ -307,7 +315,7 @@ function renderDeck(){
     card.className = `deck-card ${level}`;
     card.style.zIndex = String(30 - i);
     card.innerHTML = `
-      <div class="date">${d.start}</div>
+      <div class="date">${weekRange(d.start)}</div>
       ${i===0 ? '<div class="now">이번 주</div>' : ''}
       <div class="letter">${d.char}</div>
       <div class="reading">${d.reading}</div>
