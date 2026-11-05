@@ -5,138 +5,486 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>한자의 아침 — 이번 주의 한자</title>
+
 <style>
 *{box-sizing:border-box}
+
 body{
-  margin:0;min-height:100vh;
+  margin:0;
+  min-height:100vh;
   font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;
-  background:#f4f1eb;color:#24211d;
-  display:flex;align-items:center;justify-content:center
+  background:#f4f1eb;
+  color:#24211d;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
-.app{width:min(1100px,94vw);min-height:92vh;display:flex;flex-direction:column}
-header{display:flex;justify-content:space-between;align-items:center;padding:24px 4px}
+
+.app{
+  width:min(1100px,94vw);
+  min-height:92vh;
+  display:flex;
+  flex-direction:column;
+}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:24px 4px;
+}
+
 .brand{font-size:14px;letter-spacing:.12em}
 .counter{font-size:12px;color:#777}
-main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+
+main{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+
 .hidden{display:none!important}
-footer{padding:25px 4px;text-align:center;color:#999;font-size:11px}
 
-.week-head{margin:0 0 14px;font-size:13px;letter-spacing:.12em;color:#8a8177}
-.week-title{font-family:serif;font-weight:400;font-size:clamp(28px,5vw,52px);margin:0 0 10px}
-.week-sub{font-size:13px;color:#8a8177;margin:0 0 34px}
-.deck-stage{position:relative;width:min(430px,82vw);aspect-ratio:3/4;margin:0 auto 28px;perspective:1400px}
+footer{
+  padding:25px 4px;
+  text-align:center;
+  color:#999;
+  font-size:11px;
+}
+
+/* 카드 더미 */
+
+.week-head{
+  margin:0 0 14px;
+  font-size:13px;
+  letter-spacing:.12em;
+  color:#8a8177;
+}
+
+.week-title{
+  font-family:serif;
+  font-weight:400;
+  font-size:clamp(28px,5vw,52px);
+  margin:0 0 10px;
+}
+
+.week-sub{
+  font-size:13px;
+  color:#8a8177;
+  margin:0 0 34px;
+}
+
+.deck-stage{
+  position:relative;
+  width:min(430px,82vw);
+  aspect-ratio:3/4;
+  margin:0 auto 28px;
+  perspective:1400px;
+}
+
 .deck-card{
-  position:absolute;inset:0;background:#fbfaf7;border:1px solid #d7d0c6;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  cursor:pointer;transition:transform .65s cubic-bezier(.2,.75,.2,1),opacity .35s,filter .35s;
-  box-shadow:0 18px 42px #00000010;transform-origin:50% 75%
+  position:absolute;
+  inset:0;
+  background:#fbfaf7;
+  border:1px solid #d7d0c6;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:
+    transform .65s cubic-bezier(.2,.75,.2,1),
+    opacity .35s,
+    filter .35s;
+  box-shadow:0 18px 42px #00000010;
+  transform-origin:50% 75%;
 }
-.deck-card .letter{font-family:serif;font-size:clamp(100px,18vw,170px);line-height:1}
-.deck-card .reading{margin-top:25px;font-size:17px}
-.deck-card .tag{margin-top:10px;color:#81786e;font-size:14px}
-.deck-card .date{position:absolute;left:22px;top:20px;font-size:11px;letter-spacing:.1em;color:#a59b90}
-.deck-card .now{position:absolute;right:22px;top:20px;font-size:10px;letter-spacing:.11em;color:#6f655b}
-.deck-card.active{z-index:20;transform:translateY(-10px) rotate(0deg) scale(1.015)}
-.deck-card.back-1{z-index:9;transform:translate(12px,14px) rotate(1.8deg) scale(.985)}
-.deck-card.back-2{z-index:8;transform:translate(-13px,24px) rotate(-2.4deg) scale(.97)}
-.deck-card.back-3{z-index:7;transform:translate(20px,34px) rotate(3deg) scale(.955)}
-.deck-card.back-4{z-index:6;transform:translate(-18px,43px) rotate(-3.4deg) scale(.94)}
-.deck-card.back-5{z-index:5;transform:translate(10px,50px) rotate(1.4deg) scale(.925)}
-.deck-card.hidden-card{opacity:0;pointer-events:none}
-.deck.shuffling .deck-card{animation:shuffle .78s ease both}
-.deck.shuffling .deck-card:nth-child(2n){animation-delay:.04s}
-.deck.shuffling .deck-card:nth-child(3n){animation-delay:.08s}
-@keyframes shuffle{
-  0%{transform:translate(0,0) rotate(0) scale(1)}
-  30%{transform:translate(-38px,-5px) rotate(-6deg) scale(.98)}
-  58%{transform:translate(42px,-8px) rotate(6deg) scale(.985)}
-  80%{transform:translate(-10px,3px) rotate(-1.5deg) scale(.99)}
-}
-.deck-hint{font-size:12px;color:#9a928a;margin-top:14px}
-.deck-actions,.actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}
-.archive-note{font-size:11px;color:#aaa;margin-top:12px}
 
-.card-wrap{perspective:1400px;width:min(430px,82vw);aspect-ratio:3/4;margin:5px auto 28px;cursor:pointer}
-.card{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
-.card.flipped{transform:rotateY(180deg)}
-.face{
-  position:absolute;inset:0;backface-visibility:hidden;background:#fbfaf7;
-  border:1px solid #d7d0c6;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;padding:35px
+.deck-card .letter{
+  font-family:serif;
+  font-size:clamp(100px,18vw,170px);
+  line-height:1;
 }
-.back{transform:rotateY(180deg)}
-.face .big{font-family:serif;font-size:clamp(100px,18vw,170px);line-height:1}
-.face .title{font-size:17px;margin-top:25px}
-.face .phrase{margin-top:10px;color:#81786e;font-size:14px}
-.back .mini{font-size:12px;letter-spacing:.12em;color:#968b80;margin-bottom:35px}
-.back h2{font-family:serif;font-weight:400;font-size:clamp(22px,4vw,32px);line-height:1.5;margin:0 0 25px}
-.back p{font-size:14px;line-height:2;color:#5f5952;max-width:310px;margin:0}
-.hint{font-size:12px;color:#9a928a}
+
+.deck-card .reading{
+  margin-top:25px;
+  font-size:17px;
+}
+
+.deck-card .tag{
+  margin-top:10px;
+  color:#81786e;
+  font-size:14px;
+}
+
+.deck-card .date{
+  position:absolute;
+  left:22px;
+  top:20px;
+  font-size:11px;
+  letter-spacing:.1em;
+  color:#a59b90;
+}
+
+.deck-card .now{
+  position:absolute;
+  right:22px;
+  top:20px;
+  font-size:10px;
+  letter-spacing:.11em;
+  color:#6f655b;
+}
+
+.deck-card.active{
+  z-index:20;
+  transform:translateY(-10px) rotate(0deg) scale(1.015);
+}
+
+.deck-card.back-1{
+  z-index:9;
+  transform:translate(12px,14px) rotate(1.8deg) scale(.985);
+}
+
+.deck-card.back-2{
+  z-index:8;
+  transform:translate(-13px,24px) rotate(-2.4deg) scale(.97);
+}
+
+.deck-card.back-3{
+  z-index:7;
+  transform:translate(20px,34px) rotate(3deg) scale(.955);
+}
+
+.deck-card.back-4{
+  z-index:6;
+  transform:translate(-18px,43px) rotate(-3.4deg) scale(.94);
+}
+
+.deck-card.back-5{
+  z-index:5;
+  transform:translate(10px,50px) rotate(1.4deg) scale(.925);
+}
+
+.deck-card.hidden-card{
+  opacity:0;
+  pointer-events:none;
+}
+
+.deck.shuffling .deck-card{
+  animation:shuffle .78s ease both;
+}
+
+.deck.shuffling .deck-card:nth-child(2n){
+  animation-delay:.04s;
+}
+
+.deck.shuffling .deck-card:nth-child(3n){
+  animation-delay:.08s;
+}
+
+@keyframes shuffle{
+  0%{
+    transform:translate(0,0) rotate(0) scale(1);
+  }
+  30%{
+    transform:translate(-38px,-5px) rotate(-6deg) scale(.98);
+  }
+  58%{
+    transform:translate(42px,-8px) rotate(6deg) scale(.985);
+  }
+  80%{
+    transform:translate(-10px,3px) rotate(-1.5deg) scale(.99);
+  }
+}
+
+.deck-hint{
+  font-size:12px;
+  color:#9a928a;
+  margin-top:14px;
+}
+
+.deck-actions,
+.actions{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin-top:20px;
+}
+
+.archive-note{
+  font-size:11px;
+  color:#aaa;
+  margin-top:12px;
+}
+
+/* 앞뒤 카드 */
+
+.card-wrap{
+  perspective:1400px;
+  width:min(430px,82vw);
+  aspect-ratio:3/4;
+  margin:5px auto 28px;
+  cursor:pointer;
+}
+
+.card{
+  width:100%;
+  height:100%;
+  position:relative;
+  transform-style:preserve-3d;
+  transition:transform .7s cubic-bezier(.2,.7,.2,1);
+}
+
+.card.flipped{
+  transform:rotateY(180deg);
+}
+
+.face{
+  position:absolute;
+  inset:0;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  background:#fbfaf7;
+  border:1px solid #d7d0c6;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:35px;
+}
+
+.back{
+  transform:rotateY(180deg);
+}
+
+.face .big{
+  font-family:serif;
+  font-size:clamp(100px,18vw,170px);
+  line-height:1;
+}
+
+.face .title{
+  font-size:17px;
+  margin-top:25px;
+}
+
+.face .phrase{
+  margin-top:10px;
+  color:#81786e;
+  font-size:14px;
+}
+
+.back .mini{
+  font-size:12px;
+  letter-spacing:.12em;
+  color:#968b80;
+  margin-bottom:35px;
+}
+
+.back h2{
+  font-family:serif;
+  font-weight:400;
+  font-size:clamp(22px,4vw,32px);
+  line-height:1.5;
+  margin:0 0 25px;
+}
+
+.back p{
+  font-size:14px;
+  line-height:2;
+  color:#5f5952;
+  max-width:310px;
+  margin:0;
+}
+
+.hint{
+  font-size:12px;
+  color:#9a928a;
+}
+
+/* 버튼 */
 
 button{
-  border:1px solid #cfc7bd;background:transparent;padding:11px 20px;
-  border-radius:30px;cursor:pointer;font:inherit;font-size:12px;color:#4c4741
+  border:1px solid #cfc7bd;
+  background:transparent;
+  padding:11px 20px;
+  border-radius:30px;
+  cursor:pointer;
+  font:inherit;
+  font-size:12px;
+  color:#4c4741;
 }
-button:hover{background:#ebe6df}
+
+button:hover{
+  background:#ebe6df;
+}
+
+/* 해설 및 설문 팝업 */
+
 .modal{
-  position:fixed;inset:0;background:#0008;display:flex;
-  align-items:center;justify-content:center;padding:20px;z-index:10
+  position:fixed;
+  inset:0;
+  background:#0008;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:10;
 }
-.modalbox{background:#faf8f4;width:min(650px,94vw);max-height:86vh;overflow:auto;padding:38px}
-.modalbox .mletter{font-family:serif;font-size:72px;text-align:center;margin-bottom:12px}
-.modalbox h2{font-family:serif;font-weight:400;text-align:center;margin:0 0 30px}
-.section{margin:25px 0}
-.section h3{font-size:12px;letter-spacing:.12em;color:#8b8176;margin-bottom:10px}
-.section p{font-family:serif;font-size:16px;line-height:2;margin:0;white-space:pre-line}
+
+.modalbox{
+  background:#faf8f4;
+  width:min(650px,94vw);
+  max-height:86vh;
+  overflow:auto;
+  padding:38px;
+}
+
+.modalbox .mletter{
+  font-family:serif;
+  font-size:72px;
+  text-align:center;
+  margin-bottom:12px;
+}
+
+.modalbox h2{
+  font-family:serif;
+  font-weight:400;
+  text-align:center;
+  margin:0 0 30px;
+}
+
+.section{
+  margin:25px 0;
+}
+
+.section h3{
+  font-size:12px;
+  letter-spacing:.12em;
+  color:#8b8176;
+  margin-bottom:10px;
+}
+
+.section p{
+  font-family:serif;
+  font-size:16px;
+  line-height:2;
+  margin:0;
+  white-space:pre-line;
+}
+
 .form-modalbox{
-  width:min(740px,96vw);height:min(850px,90dvh);max-height:90dvh;
-  padding:14px;display:flex;flex-direction:column;overflow:hidden
+  width:min(740px,96vw);
+  height:min(850px,90dvh);
+  max-height:90dvh;
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
 }
-.form-header{display:flex;justify-content:space-between;align-items:center;padding:2px 6px 10px;font-size:14px}
-#storyFrame{width:100%;border:0;flex:1;min-height:0;background:#fff}
-.form-note{margin:8px 0 0;text-align:center;font-size:12px;color:#777}
-.form-note a{color:#4c4741;text-decoration:underline}
+
+.form-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:2px 6px 10px;
+  font-size:14px;
+}
+
+#storyFrame{
+  width:100%;
+  border:0;
+  flex:1;
+  min-height:0;
+  background:#fff;
+}
+
+.form-note{
+  margin:8px 0 0;
+  text-align:center;
+  font-size:12px;
+  color:#777;
+}
+
+.form-note a{
+  color:#4c4741;
+  text-decoration:underline;
+}
+
 @media(max-width:650px){
   .modalbox{padding:25px}
-  .form-modalbox{width:100%;height:94dvh;max-height:94dvh;padding:10px}
+  .form-modalbox{
+    width:100%;
+    height:94dvh;
+    max-height:94dvh;
+    padding:10px;
+  }
 }
 </style>
 </head>
+
 <body>
+
 <div class="app">
+
 <header>
   <div class="brand">한자의 아침</div>
   <div class="counter" id="counter"></div>
 </header>
 
+<!-- 메인 화면 -->
+
 <main id="home">
   <div class="week-head">THIS WEEK</div>
   <h1 class="week-title">이번 주의 한자</h1>
-  <p class="week-sub">카드가 섞인 뒤, 이번 주 한 장이 앞으로 나옵니다.</p>
-  <div class="deck-stage"><div class="deck" id="deck"></div></div>
-  <div class="deck-hint">맨 앞 카드를 눌러 질문을 확인해보세요.</div>
+  <p class="week-sub">
+    카드가 섞인 뒤, 이번 주 한 장이 앞으로 나옵니다.
+  </p>
+
+  <div class="deck-stage">
+    <div class="deck" id="deck"></div>
+  </div>
+
+  <div class="deck-hint">
+    맨 앞 카드를 눌러 질문을 확인해보세요.
+  </div>
+
   <div class="deck-actions">
     <button onclick="shuffleDeck()">카드 다시 섞기</button>
   </div>
+
   <div class="archive-note" id="archiveNote"></div>
 </main>
+
+<!-- 카드 앞뒤 화면 -->
 
 <main id="cardScreen" class="hidden">
   <div class="card-wrap" onclick="flipCard()">
     <div class="card" id="card">
+
       <div class="face front">
         <div class="big" id="bigChar"></div>
         <div class="title" id="reading"></div>
         <div class="phrase" id="phrase"></div>
       </div>
+
       <div class="face back">
         <div class="mini">한 번 더 생각해보기</div>
         <h2 id="question"></h2>
         <p id="prompt"></p>
       </div>
+
     </div>
   </div>
-  <div class="hint">카드를 클릭하면 뒤집힙니다</div>
+
+  <div class="hint">
+    카드를 클릭하면 뒤집힙니다
+  </div>
+
   <div class="actions">
     <button onclick="openExplain()">카드 해설</button>
     <button onclick="story()">내 이야기 남기기</button>
@@ -144,42 +492,97 @@ button:hover{background:#ebe6df}
   </div>
 </main>
 
-<footer>SPACE 카드 뒤집기 · N 카드 더미 · ESC 닫기</footer>
+<footer>
+  SPACE 카드 뒤집기 · N 카드 더미 · ESC 닫기
+</footer>
+
 </div>
 
-<div id="modal" class="modal hidden" onclick="if(event.target===this)closeModal()">
+<!-- 카드 해설 팝업 -->
+
+<div
+  id="modal"
+  class="modal hidden"
+  onclick="if(event.target===this)closeModal()"
+>
   <div class="modalbox">
     <div class="mletter" id="mletter"></div>
     <h2 id="mtitle"></h2>
+
     <div class="section">
       <h3>글자의 이야기</h3>
       <p id="storyText"></p>
     </div>
+
     <div class="section">
       <h3>한 번 더 생각해보기</h3>
       <p id="mquestion"></p>
     </div>
-    <div class="actions"><button onclick="closeModal()">닫기</button></div>
+
+    <div class="actions">
+      <button onclick="closeModal()">닫기</button>
+    </div>
   </div>
 </div>
 
-<div id="storyModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="내 이야기 남기기" onclick="if(event.target===this)closeModal()">
+<!-- 이야기 작성 Google 설문 팝업 -->
+
+<div
+  id="storyModal"
+  class="modal hidden"
+  role="dialog"
+  aria-modal="true"
+  aria-label="내 이야기 남기기"
+  onclick="if(event.target===this)closeModal()"
+>
   <div class="modalbox form-modalbox">
+
     <div class="form-header">
       <strong>내 이야기 남기기</strong>
-      <button type="button" onclick="closeModal()">✕ 닫기</button>
+      <button type="button" onclick="closeModal()">
+        ✕ 닫기
+      </button>
     </div>
-    <iframe id="storyFrame" title="한자의 아침 이야기 편지 구글 설문" loading="lazy"></iframe>
+
+    <iframe
+      id="storyFrame"
+      title="한자의 아침 이야기 편지 구글 설문"
+      loading="lazy"
+      referrerpolicy="strict-origin-when-cross-origin"
+    ></iframe>
+
     <p class="form-note">
       설문이 보이지 않으면
-      <a href="https://docs.google.com/forms/d/1rQY5PHKkGA31ON1RQDnor91ufuciVmziSLKlvdksg6U/viewform" target="_blank" rel="noopener noreferrer">구글 설문 직접 열기</a>
+      <a
+        href="https://docs.google.com/forms/d/1rQY5PHKkGA31ON1RQDnor91ufuciVmziSLKlvdksg6U/viewform"
+        target="_blank"
+        rel="noopener noreferrer"
+      >구글 설문 직접 열기</a>
     </p>
+
   </div>
 </div>
 
 <script>
+
+/*
+  한자의 아침 저널링 카드
+
+  자동 전환 기준:
+  매주 화요일 오전 0시, 한국 시간(Asia/Seoul)
+
+  새 카드 추가 시:
+  cards 배열 끝에 새 객체를 추가하고
+  start에 해당 화요일 날짜를 입력합니다.
+
+  예:
+  start:'2026-12-01'
+*/
+
 const cards = [
+
   // 10월 1주차
+
   {
     key:'joy',
     start:'2026-09-28',
@@ -196,7 +599,9 @@ const cards = [
 
 당신은 요즘 무엇과 함께할 때 가장 즐거운가요?`
   },
+
   // 10월 2주차
+
   {
     key:'sadness',
     start:'2026-10-05',
@@ -213,7 +618,9 @@ const cards = [
 
 최근 당신을 슬프게 한 일은 무엇인가요?`
   },
+
   // 10월 3주차
+
   {
     key:'anger',
     start:'2026-10-12',
@@ -230,7 +637,9 @@ const cards = [
 
 당신의 분노는 무엇을 지키려고 하고 있나요?`
   },
+
   // 10월 4주차
+
   {
     key:'fear',
     start:'2026-10-19',
@@ -248,120 +657,188 @@ const cards = [
 당신은 지금 무엇을 두려워하고 있나요?`
   },
 
-  // 11월 1주차 — 11월 2일
+  // 11월 1주차
+  // 10월 27일 화요일부터
+
   {
-    key:'nov-joy',
-    start:'2026-10-26',
-    char:'樂',
-    reading:'즐거울 락',
-    phrase:'함께할 때 커지는 즐거움',
-    question:'요즘 나는 무엇과 함께할 때<br>가장 즐거운가요?',
-    prompt:'사람일 수도, 장소일 수도, 아주 사소한 순간일 수도 있습니다.<br>즐거웠던 장면 하나를 떠올려보세요.',
-    story:`樂은 본래 악기의 모습을 담은 글자입니다.
+    key:'nov-surprise',
+    start:'2026-10-27',
+    char:'驚',
+    reading:'놀랄 경',
+    phrase:'일상에서 만나는 놀라움',
+    question:'최근 가장 놀랐던 일은<br>무엇인가요?',
+    prompt:'뜻밖의 소식이나 장면을 떠올려보세요.<br>그때 어떤 기분이 들었나요?',
+    story:`驚은 敬(공경할 경)과 馬(말 마)가 합쳐진 글자입니다. 갑자기 놀라 뛰는 말처럼, 예상하지 못한 일을 만났을 때 몸과 마음이 반응하는 모습을 떠올릴 수 있습니다.
 
-나무와 현을 닮은 형태에서 음악이 울려 퍼지는 장면을 떠올립니다. 소리는 한 사람에게서 시작하지만 다른 사람에게 전해지고, 여러 소리가 만나 하나의 음악이 됩니다.
+놀라움에는 두려움도 있지만, 감탄과 경이로움도 있습니다. 평소에는 당연하게 여기던 것들이 어느 순간 새롭게 보이기도 합니다.
 
-즐거움도 그런 것이 아닐까요? 혼자 느끼는 기쁨도 있지만 누군가와 함께할 때 더욱 커지는 즐거움이 있습니다.
-
-요즘 당신을 저절로 웃게 만드는 것은 무엇인가요?`
+최근 당신을 놀라게 한 일은 무엇인가요?`
   },
 
-  // 11월 2주차 — 11월 9일
+  // 11월 2주차
+  // 11월 3일 화요일부터
+
   {
-    key:'nov-feeling',
-    start:'2026-11-02',
-    char:'感',
-    reading:'느낄 감',
-    phrase:'마음에 오래 남는 울림',
-    question:'최근 가장 기억에 남는 순간은<br>언제인가요?',
-    prompt:'마음에 오래 남은 장면 하나를 떠올리고,<br>그때 어떤 느낌이 들었는지 살펴보세요.',
-    story:`感은 咸과 心이 합쳐진 글자입니다.
+    key:'nov-hope',
+    start:'2026-11-03',
+    char:'望',
+    reading:'바랄 망',
+    phrase:'먼 곳을 바라보는 마음',
+    question:'요즘 가장 바라는 것은<br>무엇인가요?',
+    prompt:'가까운 미래에 이루고 싶은 일도,<br>아직 먼 꿈도 좋습니다.',
+    story:`望은 멀리 바라본다는 뜻과 무언가를 바란다는 뜻을 함께 지닌 글자입니다. 옛 글자에는 멀리 있는 달을 바라보는 모습이 담겨있습니다.
 
-어떤 순간은 오래 지나도 마음에 선명하게 남습니다. 그때 들었던 목소리, 스쳤던 바람, 누군가의 표정이 문득 되살아납니다.
+우리는 아직 손에 닿지 않는 것을 바라보며 살아갑니다. 어떤 바람은 금세 이루어지고, 어떤 바람은 오랫동안 우리의 발걸음을 이끕니다.
 
-우리가 어떤 일을 기억하는 것은 단지 특별한 사건이었기 때문만은 아닐 것입니다. 그 순간 내 마음이 깊이 움직였기 때문일지도 모릅니다.
-
-최근 당신의 마음에 오래 남은 순간은 언제였나요?`
+지금 당신이 바라보고 있는 것은 무엇인가요?`
   },
 
-  // 11월 3주차 — 11월 16일
+  // 11월 3주차
+  // 11월 10일 화요일부터
+
   {
-    key:'nov-convey',
-    start:'2026-11-9',
-    char:'傳',
-    reading:'전할 전',
-    phrase:'사람을 통해 이어지는 마음',
-    question:'누군가에게 꼭 전하고 싶은 말은<br>무엇인가요?',
-    prompt:'한 사람을 떠올리고, 아직 전하지 못한 마음이 있다면<br>그 말을 적어보세요.',
-    story:`傳은 사람을 나타내는 亻과 叀이 합쳐진 글자입니다.
+    key:'nov-worry',
+    start:'2026-11-10',
+    char:'煩',
+    reading:'번거로울 번',
+    phrase:'머릿속을 떠나지 않는 생각',
+    question:'요즘 어떤 생각이 자꾸<br>머릿속을 맴도나요?',
+    prompt:'해결하지 못한 일이나 자꾸 떠오르는<br>걱정 하나를 적어보세요.',
+    story:`煩은 火(불 화)와 頁(머리 혈)이 합쳐진 글자입니다. 머리 속에 불이 타오르는 것처럼 생각이 복잡하게 뒤엉키는 모습이 떠오릅니다.
 
-사람은 말과 이야기를 다른 사람에게 전하며 살아갑니다. 어떤 말은 금세 잊히지만 어떤 말은 오랫동안 누군가의 마음에 남습니다.
+걱정은 한 번 시작되면 꼬리에 꼬리를 물기도 합니다. 이미 지나간 일을 되짚거나 아직 일어나지 않은 일을 걱정하다 보면 어느새 머릿속이 가득 찹니다.
 
-고맙다는 말, 미안하다는 말, 그리웠다는 말. 마음속에 오래 품고 있었지만 아직 전하지 못한 이야기가 있을지도 모릅니다.
-
-지금 당신이 떠올리는 사람은 누구인가요?`
+요즘 당신을 가장 괴롭히는 생각은 무엇인가요?`
   },
 
-  // 11월 4주차 — 11월 23일
+  // 11월 4주차
+  // 11월 17일 화요일부터
+
   {
-    key:'nov-peace',
-    start:'2026-11-16',
-    char:'安',
-    reading:'편안할 안',
-    phrase:'긴장을 풀고 돌아가는 자리',
-    question:'나는 어디에 있을 때<br>가장 마음이 편안한가요?',
-    prompt:'마음이 놓이는 장소나 누군가의 곁을 떠올리고,<br>그곳에서 느끼는 편안함을 적어보세요.',
-    story:`安은 지붕을 나타내는 宀과 女가 합쳐진 글자입니다.
+    key:'nov-wish',
+    start:'2026-11-17',
+    char:'願',
+    reading:'원할 원',
+    phrase:'마음 깊은 곳의 소원',
+    question:'오랫동안 마음에 품어온<br>소원은 무엇인가요?',
+    prompt:'꼭 이루고 싶은 일이나 누군가를 위해<br>빌었던 소원을 떠올려보세요.',
+    story:`願은 原(언덕 원)과 頁(머리 혈)이 합쳐진 글자입니다. 깊은 샘 앞에서 머리를 숙이고 소원을 비는 사람의 모습이 떠오릅니다.
 
-집은 비바람을 피하고 몸을 쉬게 하는 장소입니다. 하지만 지붕이 있다고 언제나 편안한 것은 아닙니다. 어떤 곳에서는 긴장을 풀고 있는 그대로의 나로 머물 수 있습니다.
+사람들은 오래전부터 물 앞에서 소원을 빌었습니다. 정화수를 떠놓고 가족의 안녕을 기원하듯, 어떤 바람은 쉽게 사라지지 않고 마음 깊은 곳에 남습니다.
 
-편안함이란 아무것도 하지 않아도 괜찮고, 무엇인가를 증명하지 않아도 되는 마음인지도 모릅니다.
-
-당신에게 그런 장소는 어디인가요?`
+당신이 오랫동안 품어온 소원은 무엇인가요?`
   }
+
 ];
 
-const data = Object.fromEntries(cards.map(c => [c.key,c]));
+/* 카드 데이터 */
+
+const data = Object.fromEntries(
+  cards.map(card=>[card.key,card])
+);
+
+/* 오늘 날짜: 한국 시간 */
 
 function todayKST(){
   const parts = new Intl.DateTimeFormat('en-CA',{
     timeZone:'Asia/Seoul',
-    year:'numeric',month:'2-digit',day:'2-digit'
+    year:'numeric',
+    month:'2-digit',
+    day:'2-digit'
   }).formatToParts(new Date());
-  const m = Object.fromEntries(parts.map(p=>[p.type,p.value]));
+
+  const m = Object.fromEntries(
+    parts.map(p=>[p.type,p.value])
+  );
+
   return `${m.year}-${m.month}-${m.day}`;
 }
 
+/* 카드 표시 기간
+   해당 시작일부터 다음 카드 시작 전날까지 */
+
 function weekRange(start){
+  const ordered = [...cards].sort(
+    (a,b)=>a.start.localeCompare(b.start)
+  );
+
+  const index = ordered.findIndex(c=>c.start===start);
+  const next = ordered[index+1];
+
   const [y,m,d] = start.split('-').map(Number);
   const a = new Date(Date.UTC(y,m-1,d));
-  const b = new Date(a);
-  b.setUTCDate(a.getUTCDate()+6);
+
+  const b = next
+    ? new Date(Date.UTC(
+        ...next.start.split('-').map((v,i)=>
+          i===1 ? Number(v)-1 : Number(v)
+        )
+      ))
+    : new Date(a);
+
+  if(next){
+    b.setUTCDate(b.getUTCDate()-1);
+  }else{
+    b.setUTCDate(b.getUTCDate()+6);
+  }
+
   const f=x=>String(x).padStart(2,'0');
-  return `${f(a.getUTCMonth()+1)}.${f(a.getUTCDate())}–${f(b.getUTCMonth()+1)}.${f(b.getUTCDate())}`;
+  const format=x=>
+    `${f(x.getUTCMonth()+1)}.${f(x.getUTCDate())}`;
+
+  return `${format(a)}–${format(b)}`;
 }
 
+/* 자동 카드 선택
+   시작일에 한국 시간 00:00부터 전환 */
+
 function activeKeyFromDate(date=todayKST()){
-  const forced = new URLSearchParams(location.search).get('hanja');
+
+  // 테스트용 주소:
+  // ?hanja=nov-hope 또는 ?hanja=望
+
+  const forced = new URLSearchParams(
+    location.search
+  ).get('hanja');
+
   if(forced){
-    const found = [...cards].reverse().find(c=>c.char===forced || c.key===forced);
+    const found = [...cards].reverse().find(
+      c=>c.key===forced || c.char===forced
+    );
+
     if(found)return found.key;
   }
-  const ordered = [...cards].sort((a,b)=>a.start.localeCompare(b.start));
+
+  const ordered = [...cards].sort(
+    (a,b)=>a.start.localeCompare(b.start)
+  );
+
   let active = ordered[0];
+
   for(const c of ordered){
-    if(c.start<=date)active=c;
-    else break;
+    if(c.start<=date){
+      active=c;
+    }else{
+      break;
+    }
   }
+
   return active.key;
 }
 
 let current = activeKeyFromDate();
 
+/* 카드 더미 표시 */
+
 function renderDeck(){
   const deck = document.getElementById('deck');
-  deck.innerHTML = '';
-  const currentIndex = cards.findIndex(c=>c.key===current);
+
+  deck.innerHTML='';
+
+  const currentIndex = cards.findIndex(
+    c=>c.key===current
+  );
+
   const order = [
     cards[currentIndex],
     ...cards.slice(currentIndex+1),
@@ -369,10 +846,17 @@ function renderDeck(){
   ];
 
   order.forEach((d,i)=>{
-    const card = document.createElement('div');
-    const level = i===0?'active':i<=5?`back-${i}`:'hidden-card';
+    const card=document.createElement('div');
+
+    const level=i===0
+      ? 'active'
+      : i<=5
+        ? `back-${i}`
+        : 'hidden-card';
+
     card.className=`deck-card ${level}`;
     card.style.zIndex=String(30-i);
+
     card.innerHTML=`
       <div class="date">${weekRange(d.start)}</div>
       ${i===0?'<div class="now">이번 주</div>':''}
@@ -380,86 +864,189 @@ function renderDeck(){
       <div class="reading">${d.reading}</div>
       <div class="tag">${d.phrase}</div>
     `;
-    if(i===0)card.addEventListener('click',()=>choose(d.key));
+
+    if(i===0){
+      card.addEventListener(
+        'click',()=>choose(d.key)
+      );
+    }
+
     deck.appendChild(card);
   });
 
-  document.getElementById('counter').textContent=cards[currentIndex].char;
+  document.getElementById('counter').textContent=
+    cards[currentIndex].char;
+
   document.getElementById('archiveNote').textContent=
     `현재 ${cards.length}장의 카드가 쌓여 있습니다.`;
 }
 
+/* 카드 섞기 */
+
 function shuffleDeck(){
   const deck=document.getElementById('deck');
+
   deck.classList.remove('shuffling');
   void deck.offsetWidth;
   deck.classList.add('shuffling');
-  setTimeout(()=>deck.classList.remove('shuffling'),900);
+
+  setTimeout(
+    ()=>deck.classList.remove('shuffling'),
+    900
+  );
 }
+
+/* 카드 선택 */
 
 function choose(type){
   current=type;
+
   const d=data[type];
-  document.getElementById('home').classList.add('hidden');
-  document.getElementById('cardScreen').classList.remove('hidden');
+
+  document.getElementById('home')
+    .classList.add('hidden');
+
+  document.getElementById('cardScreen')
+    .classList.remove('hidden');
+
   document.getElementById('bigChar').textContent=d.char;
   document.getElementById('reading').textContent=d.reading;
   document.getElementById('phrase').textContent=d.phrase;
   document.getElementById('question').innerHTML=d.question;
   document.getElementById('prompt').innerHTML=d.prompt;
-  document.getElementById('card').classList.remove('flipped');
+
+  document.getElementById('card')
+    .classList.remove('flipped');
+
   document.getElementById('counter').textContent=d.char;
 }
 
+/* 카드 뒤집기 */
+
 function flipCard(){
-  document.getElementById('card').classList.toggle('flipped');
+  document.getElementById('card')
+    .classList.toggle('flipped');
 }
+
+/* 카드 더미로 돌아가기 */
 
 function home(){
   current=activeKeyFromDate();
-  document.getElementById('cardScreen').classList.add('hidden');
-  document.getElementById('home').classList.remove('hidden');
+
+  document.getElementById('cardScreen')
+    .classList.add('hidden');
+
+  document.getElementById('home')
+    .classList.remove('hidden');
+
   renderDeck();
 }
 
+/* 카드 해설 */
+
 function openExplain(){
   const d=data[current];
+
   document.getElementById('mletter').textContent=d.char;
-  document.getElementById('mtitle').textContent=d.reading+' · '+d.phrase;
+
+  document.getElementById('mtitle').textContent=
+    d.reading+' · '+d.phrase;
+
   document.getElementById('storyText').textContent=d.story;
-  document.getElementById('mquestion').innerHTML=d.question;
-  document.getElementById('modal').classList.remove('hidden');
+
+  document.getElementById('mquestion').innerHTML=
+    d.question;
+
+  document.getElementById('modal')
+    .classList.remove('hidden');
 }
+
+/* 내 이야기 남기기 */
 
 function story(){
   const frame=document.getElementById('storyFrame');
+
   if(!frame.src){
-    frame.src='https://docs.google.com/forms/d/1rQY5PHKkGA31ON1RQDnor91ufuciVmziSLKlvdksg6U/viewform?embedded=true';
+    frame.src=
+      'https://docs.google.com/forms/d/1rQY5PHKkGA31ON1RQDnor91ufuciVmziSLKlvdksg6U/viewform?embedded=true';
   }
-  document.getElementById('storyModal').classList.remove('hidden');
+
+  document.getElementById('storyModal')
+    .classList.remove('hidden');
 }
 
+/* 팝업 닫기 */
+
 function closeModal(){
-  document.querySelectorAll('.modal').forEach(x=>x.classList.add('hidden'));
+  document.querySelectorAll('.modal').forEach(
+    x=>x.classList.add('hidden')
+  );
 }
+
+/* 날짜 변경 감지
+   페이지를 계속 열어둔 경우에도
+   화요일이 되면 카드를 갱신 */
+
+let lastDate = todayKST();
+
+function checkDateChange(){
+  const now=todayKST();
+
+  if(now!==lastDate){
+    lastDate=now;
+
+    // 카드 화면을 열어둔 경우에는
+    // 읽던 내용을 유지하고
+    // 메인으로 돌아올 때 새 카드를 표시합니다.
+    if(
+      document.getElementById('cardScreen')
+        .classList.contains('hidden')
+    ){
+      current=activeKeyFromDate();
+      renderDeck();
+    }
+  }
+}
+
+setInterval(checkDateChange,60000);
+
+/* 최초 실행 */
 
 renderDeck();
 setTimeout(shuffleDeck,250);
 
+/* 키보드 조작 */
+
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape')closeModal();
-  if(e.code==='Space' &&
-     !document.getElementById('cardScreen').classList.contains('hidden') &&
-     document.getElementById('storyModal').classList.contains('hidden') &&
-     document.getElementById('modal').classList.contains('hidden')){
+
+  if(e.key==='Escape'){
+    closeModal();
+  }
+
+  if(
+    e.code==='Space' &&
+    !document.getElementById('cardScreen')
+      .classList.contains('hidden') &&
+    document.getElementById('storyModal')
+      .classList.contains('hidden') &&
+    document.getElementById('modal')
+      .classList.contains('hidden')
+  ){
     e.preventDefault();
     flipCard();
   }
-  if(e.key.toLowerCase()==='n' &&
-     !['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){
+
+  if(
+    e.key.toLowerCase()==='n' &&
+    !['INPUT','TEXTAREA'].includes(
+      document.activeElement.tagName
+    )
+  ){
     home();
   }
+
 });
+
 </script>
 </body>
 </html>
